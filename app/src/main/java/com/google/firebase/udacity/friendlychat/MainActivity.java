@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
 
     public static final int RC_SIGN_IN = 1; // request code for sign-in
+    private static final int RC_PHOTO_PICKER =  2;
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
@@ -104,7 +105,11 @@ public class MainActivity extends AppCompatActivity {
         mPhotoPickerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: Fire an intent to show an image picker
+                // DONE: Fire an intent to show an image picker
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), RC_PHOTO_PICKER);
             }
         });
 
@@ -141,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 mMessageEditText.setText("");
             }
         });
+
         // initialize firebase auth state listener
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -243,20 +249,16 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                }
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
                 @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                }
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
 
                 @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                }
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                }
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
             };
             // subscribe child listener to child "messages"
             mMessagesDatabaseReference.addChildEventListener(mChildEventListener);
