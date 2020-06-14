@@ -15,6 +15,7 @@
  */
 package com.google.firebase.udacity.friendlychat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ANONYMOUS = "anonymous";
     public static final int DEFAULT_MSG_LENGTH_LIMIT = 1000;
 
-    private static final int RC_SIGN_IN = 1; // request code for sign-in
+    public static final int RC_SIGN_IN = 1; // request code for sign-in
 
     private ListView mMessageListView;
     private MessageAdapter mMessageAdapter;
@@ -172,6 +173,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            if (resultCode == RESULT_OK) {
+                // Sign-in succeeded, set up the UI
+                Toast.makeText(this, "Signed in!", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                // Sign in was canceled by the user, finish the activity
+                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         mFirebaseAuth.addAuthStateListener(mAuthStateListener);
@@ -201,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void onSignedInInitialize(String username) {
         mUsername = username;
-        attachDatabaseReadListner();
+        attachDatabaseReadListener();
     }
 
     private void onSignedOutCleanup() {
@@ -210,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         detachDatabaseReadListener();
     }
 
-    private void attachDatabaseReadListner() {
+    private void attachDatabaseReadListener() {
         if (mChildEventListener == null) {
             mChildEventListener = new ChildEventListener() {
                 @Override
